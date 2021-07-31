@@ -55,10 +55,11 @@ if (isset($_SESSION['user']) && isset($_SESSION['role'])) {
   </div>
 </div>
 </div>
+
 <footer class="page-footer red-hola">
   <div class="footer-copyright">
     <div class="container">
-    By  <a class="grey-text text-lighten-4 right" href="https://therogerize.github.io/" target="_blank">Roy Gutiérrez</a>  © 2021 Copyright 
+       By  <a class="grey-text text-lighten-4 right" href="https://therogerize.github.io/" target="_blank">Roy Gutiérrez</a>  © 2021 Copyright 
     </div>
   </div>
 </footer>
