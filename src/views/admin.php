@@ -1,5 +1,6 @@
 <?php
 include "../templates/header.php";
+
 if (isset($_SESSION['user'])) {
   $user = $_SESSION['user'];
   $role = $_SESSION['role'];
@@ -18,11 +19,5 @@ if (isset($_SESSION['user'])) {
 
 <?php
 include_once "../templates/welcome.php";
-?>
-
-<?php 
-
-?>
-<?php
-include_once "../controllers/getUsers.php";
+include_once "../templates/users-list.php";
 ?>

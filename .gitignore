@@ -1,0 +1,5 @@
+/.phpunit.result.cache
+.phpunit.result.cache
+/package-lock.json
+package-lock.json
+phpunit-6.5.phar

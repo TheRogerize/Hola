@@ -1,10 +1,13 @@
 function login() {
+
   const username = $("#username").val().trim();
   const password = $("#password").val().trim();
+
   if (username != "" && password != "") {
     $("#login-msg").html("");
     $.ajax({
       type: "POST",
+      dataType: "json",
       url: "../../src/controllers/login.php",
       data: { username: username, password: password },
       success: function (response) {
@@ -28,6 +31,9 @@ function login() {
             $("#login-msg").html(msg);
             break;
         }
+      },
+      error: function (err) {
+        alert(err);
       },
     });
   } else {
@@ -86,6 +92,7 @@ function addUser() {
   if (validateForm(user)) {
     $.ajax({
       url: "../../src/controllers/createUser.php",
+      dataType: "json",
       type: "POST",
       data: {
         name: user.name,
@@ -94,7 +101,7 @@ function addUser() {
         role: user.role,
       },
       success: function (response) {
-        if (response === "success") {
+        if (response.success) {
           $("#newUser").fadeOut(1000);
           let toastHTML = `<span>¡${user.username} was created succesfully! ✅</span>`;
           M.toast({ html: toastHTML });
@@ -102,8 +109,11 @@ function addUser() {
             location.reload();
           }, 1400);
         } else {
-          $("#add-user-msg").html(response);
+          $("#add-user-msg").html(response.message);
         }
+      },
+      error: function (err) {
+        $("#add-user-msg").html(err);
       },
     });
   }
@@ -120,6 +130,7 @@ function editUser(id) {
   user.username = $("li#user" + id).attr("username");
   user.role = $("li#user" + id).attr("role");
 
+  $("input#user_id").val(id);
   $("input#editname").val(user.name);
   $("input#editusername").val(user.username);
   $("select#editrole").val(user.role).change();
@@ -127,25 +138,29 @@ function editUser(id) {
 
 function updateUser() {
   let user = {
+    id: "",
     name: "",
     username: "",
-    role: "",
+    role: ""
   };
 
+  user.id = $("#user_id").val();
   user.name = $("#editname").val();
   user.username = $("#editusername").val();
   user.role = $("#editrole").val();
   if (validateUpdate(user)) {
     $.ajax({
       url: "../../src/controllers/updateUser.php",
+      dataType: "json",
       type: "POST",
       data: {
+        id: user.id,
         name: user.name,
         username: user.username,
         role: user.role,
       },
       success: function (response) {
-        if (response === "success") {
+        if (response.success) {
           $("#updateUser").fadeOut(1000);
           let toastHTML = `<span>¡${user.username} was updated succesfully! ✅</span>`;
           M.toast({ html: toastHTML });
@@ -153,8 +168,11 @@ function updateUser() {
             location.reload();
           }, 1400);
         } else {
-          $("#update-msg").html(response);
+          $("#update-msg").html(response.message);
         }
+      },
+      error: function (err) {
+        $("#update-msg").html(err);
       },
     });
   }
@@ -165,11 +183,12 @@ function deleteUser(id, name) {
     $.ajax({
       url: "../../src/controllers/deleteUser.php",
       type: "POST",
+      dataType: "json",
       data: { user_id: id },
       success: function (res) {
         let toastHTML = "";
 
-        if (res === "success") {
+        if (res.success) {
           toastHTML = `<span>¡${name} was deleted succesfully! ✅</span>`;
           M.toast({ html: toastHTML });
           setTimeout(() => {

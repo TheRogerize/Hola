@@ -1,4 +1,5 @@
 <?php 
+header('HTTP/1.0 403 Forbidden');
 include "../templates/header.php";
 ?>
 

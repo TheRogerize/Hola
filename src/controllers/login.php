@@ -1,22 +1,40 @@
 <?php
-include "../../config/db.php";
+session_start();
+require('../../vendor/autoload.php');
+
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
+
+include_once '../../config/database.php';
+include_once '../models/user.php';
+
+
+$database = new Database();
+$db = $database->connect();
 
 $uname = $_POST['username'];
-$password = $_POST['password'];
+$pass = $_POST['password'];
 
-if ($uname != "" && $password != "") {
+$users = new User($db, $uname, $pass);
 
-  $stmt = $conn->prepare("SELECT id, username, name, password, role FROM user WHERE username=? LIMIT 1");
-  $stmt->bind_param('s', $uname);
-  $stmt->execute();
-  $stmt->bind_result($id, $username, $name, $hashPassword, $role);
-  $stmt->store_result();
+$result = $users->authUser();
 
-  if ($stmt->num_rows == 1) {
+$num = $result->rowCount();
 
-    if ($stmt->fetch()) {
+if ($num > 0) {
 
-      $verify = password_verify($password, $hashPassword);
+  while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+    extract($row);
+
+    $user_item = array(
+      'id' => $id,
+      'name' => $name,
+      'username' => $username,
+      'hashPassword' => $password,
+      'role' => $role
+    );
+    if (!empty($user_item)) {
+      $verify = password_verify($pass, $user_item['hashPassword']);
 
       if ($verify) {
 
@@ -26,18 +44,22 @@ if ($uname != "" && $password != "") {
         $_SESSION['name'] = $name;
         $_SESSION['role'] = $role;
 
-        echo $role;
+        echo json_encode($role);
       } else {
 
-        echo "Password is incorrect";
+        echo json_encode(
+          array("message" => "Password is incorrect")
+        );
         exit();
       }
     } else {
-      echo "The account does not exist.";
+      echo json_encode(
+        array("message" => "The account does not exist.")
+      );
     }
-
-    $stmt->close();
   }
 } else {
-  echo "¡Invalid Username/Password Combination!";
+  echo json_encode(
+    array("message" => "¡Invalid Username/Password Combination or the account does not exist!")
+  );
 }

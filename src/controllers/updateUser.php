@@ -1,39 +1,73 @@
-<?php 
-include "../../config/db.php";
+<?php
+session_start();
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
 
-if(isset($_POST['username'])) {
+require('../../vendor/autoload.php');
 
+include_once '../../config/database.php';
+include_once '../models/user.php';
+
+$database = new Database();
+$db = $database->connect();
+
+$user = new User($db, null, null);
+
+if (
+  isset($_POST['id']) &&
+  isset($_POST['name']) &&
+  isset($_POST['username']) &&
+  isset($_POST['role'])
+) {
+
+  $id = $_POST['id'];
   $name = $_POST['name'];
   $username = $_POST['username'];
   $role = $_POST['role'];
   $errors = 0;
-  if($name === '' || $username === '' || $role === '') {
-    $errors++;
-  }
-  if(strlen($name) > 50 || strlen($username) > 15) {
+
+  if ($id === '' || $name === '' || $username === '' || $role === '') {
     $errors++;
   }
 
-  if($errors > 0) {
-    echo "The form has errors, please correct them.";
+  if (strlen($name) > 50 || strlen($username) > 15 ) {
+    $errors++;
+  }
+
+  if ($errors > 0) {
+    echo json_encode(
+      array(
+        "message" => "The form has errors, please correct them.",
+        "success" => false
+      )
+    );
     exit();
   }
 
-  try {
-    $stmt = $conn->prepare("UPDATE user SET name = ?, username = ?, role = ? WHERE username = ?");
-    $stmt->bind_param("ssss", $name, $username, $role, $username);
-    if($stmt->execute()) {
-      echo 'success';
-    }  
-    $stmt->close();
-} catch (Exception $e) {
-  echo $e->getMessage();
-}
-  $conn->close();
+  $updateUser = $user->updateUser($id, $name, $username, $role);
+  if ($updateUser) {
 
+    echo json_encode(
+      array(
+        "message" => "¡The user was succesfully updated!",
+        "success" => true
+      )
+    );
+  } else {
+    echo json_encode(
+      array(
+        "message" => "There was an error in the server and
+        the user could not be updated, please try again.",
+        "success" => false
+      )
+    );
+  }
 } else {
-
+  echo json_encode(
+    array(
+      "message" => "The user could not be updated because there is missing data.",
+      "success" => false
+    )
+  );
   exit();
-
 }
-?>

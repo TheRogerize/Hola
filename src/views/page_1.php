@@ -24,5 +24,5 @@ if (isset($_SESSION['user'])) {
 
 <?php
 include_once "../templates/welcome.php";
-include_once "../controllers/getUsers.php";
+include_once "../templates/users-list.php";
 ?>

@@ -159,3 +159,8 @@ html {
   width: 340px;
   max-height: 500px;
 }
+
+.preloader {
+  position: relative;
+  padding: 15px 30px !important;
+}
