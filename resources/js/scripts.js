@@ -1,5 +1,4 @@
 function login() {
-
   const username = $("#username").val().trim();
   const password = $("#password").val().trim();
 
@@ -13,24 +12,26 @@ function login() {
       success: function (response) {
         var msg = "";
         msg = "Loggin in...";
-        switch (response) {
-          case "ADMIN":
-            window.location = "../../src/views/admin.php";
-            break;
+        if (response.success) {
+          switch (response) {
+            case "ADMIN":
+              window.location = "../../src/views/admin.php";
+              break;
 
-          case "PAGE_1":
-            window.location = "../../src/views/page_1.php";
-            break;
+            case "PAGE_1":
+              window.location = "../../src/views/page_1.php";
+              break;
 
-          case "PAGE_2":
-            window.location = "../../src/views/page_2.php";
-            break;
+            case "PAGE_2":
+              window.location = "../../src/views/page_2.php";
+              break;
 
-          default:
-            msg = response;
-            $("#login-msg").html(msg);
-            break;
-        }
+            default:
+              msg = response;
+              $("#login-msg").html(msg);
+              break;
+          }
+        } else $("#login-msg").html(response.message);
       },
       error: function (err) {
         alert(err);
@@ -141,7 +142,7 @@ function updateUser() {
     id: "",
     name: "",
     username: "",
-    role: ""
+    role: "",
   };
 
   user.id = $("#user_id").val();

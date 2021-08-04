@@ -44,22 +44,36 @@ if ($num > 0) {
         $_SESSION['name'] = $name;
         $_SESSION['role'] = $role;
 
-        echo json_encode($role);
+        echo json_encode(
+          array(
+            "role" => $role,
+            "success" => true
+          )
+        );
       } else {
 
         echo json_encode(
-          array("message" => "Password is incorrect")
+          array(
+            "message" => "Password is incorrect",
+            "success" => false
+          )
         );
         exit();
       }
     } else {
       echo json_encode(
-        array("message" => "The account does not exist.")
+        array(
+          "message" => "The account does not exist.",
+          "success" => false
+        )
       );
     }
   }
 } else {
   echo json_encode(
-    array("message" => "¡Invalid Username/Password Combination or the account does not exist!")
+    array(
+      "message" => "¡Invalid Username/Password Combination or the account does not exist!",
+      "success" => false
+    )
   );
 }
